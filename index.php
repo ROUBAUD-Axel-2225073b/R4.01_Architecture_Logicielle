@@ -80,6 +80,11 @@ elseif ( '/annonces/index.php/post' == $uri
 }
 
 elseif('/annonces/index.php/createpost' == $uri) {
+    if (!isset($_SESSION['user'])) {
+        header('Location: /annonces/index.php');
+        exit();
+    }
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date = isset($_POST['date']) ? $_POST['date'] : (new \DateTime())->format('Y-m-d');
         $controller->createPostAction($_POST['title'], $_POST['body'], $date, $data);

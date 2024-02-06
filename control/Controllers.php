@@ -18,8 +18,12 @@ class Controllers
 
     public function annoncesAction($login, $password, $data, $annoncesCheck)
     {
-        if ($annoncesCheck->authenticate($login, $password, $data))
+        if ($annoncesCheck->authenticate($login, $password, $data)) {
+            $_SESSION['user'] = $login;
+        }
+        if (isset($_SESSION['user'])) {
             $annoncesCheck->getAllAnnonces($data);
+        }
     }
 
     public function postAction($id, $data, $annoncesCheck)
