@@ -14,11 +14,11 @@
     include_once 'gui/ViewPost.php';
     include_once 'gui/Layout.php';
     include_once 'gui/ViewSignup.php';
-    include_once 'gui/ViewAddPost.php';
+    include_once 'gui/ViewCreatePost.php';
 
     use control\{Controllers, Presenter};
     use data\DataAccess;
-    use gui\{Layout, ViewAnnonces, ViewLogin, ViewPost, ViewSignup, ViewAddPost};
+    use gui\{Layout, ViewAnnonces, ViewLogin, ViewPost, ViewSignup, ViewCreatePost};
     use service\AnnoncesChecking;
 
     $data = null;
@@ -79,13 +79,13 @@
         $vuePost->display();
     }
 
-    elseif('/annonces/index.php/addpost' == $uri) {
+    elseif('/annonces/index.php/createpost' == $uri) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $controller->createPostAction($_POST['title'], $_POST['body'], $_POST['date'], $data);
         }
 
         $layout = new Layout("gui/layout.html" );
-        $vueAddPost= new ViewAddPost($layout);
+        $vueAddPost= new ViewCreatePost($layout);
         $vueAddPost->display();
     }
 

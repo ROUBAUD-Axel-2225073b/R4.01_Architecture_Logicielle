@@ -13,7 +13,7 @@ class ViewAnnonces extends View
         $this->content = "<nav>
             <ul>
                 <li><a href='/annonces/index.php/annonces'>Annonces</a></li>
-                <li><a href='/annonces/index.php/addpost'>Add Post</a></li>
+                <li><a href='/annonces/index.php/createpost'>Add Post</a></li>
             </ul>
         </nav>";
 
