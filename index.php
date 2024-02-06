@@ -81,18 +81,13 @@
 
     elseif('/annonces/index.php/addpost' == $uri) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!isset($_SESSION['user'])) {
-                header('Location: /annonces/index.php');
-                exit();
-            }
-            $controller->addPostAction($_POST['title'], $_POST['body'], $_SESSION['user'], $data, $annoncesCheck);
+            $controller->createPostAction($_POST['title'], $_POST['body'], $_POST['date'], $data);
         }
 
         $layout = new Layout("gui/layout.html" );
-        $vueAddPost= new ViewAddPost( $layout);
+        $vueAddPost= new ViewAddPost($layout);
         $vueAddPost->display();
     }
-
 
 
     elseif('/annonces/index.php/signup' == $uri) {

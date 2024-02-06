@@ -17,11 +17,13 @@ class ViewAddPost extends View
             </ul>
         </nav>";
 
-        $this->content .= "<form action='/annonces/index.php/addpost' method='post'>
+        $this->content .= "<form action='/annonces/index.php' method='post'>
     <label for='title'>Title:</label><br>
     <input type='text' id='title' name='title'><br>
     <label for='body'>Body:</label><br>
     <textarea id='body' name='body'></textarea><br>
+    <label for='date'>Date:</label><br>
+    <input type='date' id='date' name='date'><br>
     <input type='submit' value='Submit'>
 </form>";
     }

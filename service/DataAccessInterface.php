@@ -8,5 +8,5 @@ interface DataAccessInterface
     public function getUser($login, $password);
     public function addUser($login, $password, $name, $surname);
     public function userExists($login);
-    public function addPost($title, $body, $date, $id);
+    public function createPost($title, $body, $date);
 }

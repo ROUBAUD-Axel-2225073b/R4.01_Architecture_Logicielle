@@ -27,17 +27,11 @@ class Controllers
         $annoncesCheck->getPost($id, $data);
     }
 
-    public function addPostAction($title, $body, $data, $annoncesCheck)
+    public function createPostAction($title, $body, $date, $data)
     {
-        if (!isset($_SESSION['user'])) {
-            header('Location: /annonces/index.php');
-            exit();
-        }
-
-        if ($annoncesCheck->addPost($title, $body, $data)) {
-            header('Location: /annonces/index.php/annonces');
-            exit();
-        }
+        $data->createPost($title, $body, $date);
+        header('Location: /annonces/index.php/annonces');
+        exit();
     }
 
     public function signupAction($login, $password, $name, $surname, $data)
