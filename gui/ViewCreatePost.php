@@ -22,8 +22,6 @@ class ViewCreatePost extends View
     <input type='text' id='title' name='title'><br>
     <label for='body'>Body:</label><br>
     <textarea id='body' name='body'></textarea><br>
-    <label for='date'>Date:</label><br>
-    <input type='date' id='date' name='date'><br>
     <input type='submit' value='Submit'>
 </form>";
     }
