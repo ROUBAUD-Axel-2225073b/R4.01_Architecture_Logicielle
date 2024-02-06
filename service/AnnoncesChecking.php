@@ -33,7 +33,6 @@ class AnnoncesChecking
         $this->annoncesTxt[] = array('id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate());
     }
 
-
     public function addPost($title, $body, $data)
     {
         if (strlen($title) > 20 || strlen($body) > 200) {
@@ -48,6 +47,5 @@ class AnnoncesChecking
 
         return $data->addPost($title, $body);
     }
-
 
 }

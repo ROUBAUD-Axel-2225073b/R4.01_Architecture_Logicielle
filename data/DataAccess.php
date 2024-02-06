@@ -95,11 +95,15 @@ class DataAccess implements DataAccessInterface
         }
     }
 
-    public function addPost($title, $body)
+    public function addPost($id, $title, $body, $date)
     {
-        $query = 'INSERT INTO Post (title, body, date) VALUES (?, ?, NOW())';
+        $query = 'INSERT INTO Post (id, title, body, date) VALUES (:id, :title, :body, :date)';
         $stmt = $this->dataAccess->prepare($query);
-        $result = $stmt->execute([$title, $body]);
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':body', $body);
+        $stmt->bindParam(':date', $date);
+        $result = $stmt->execute();
 
         if ($result === false) {
             $errorInfo = $stmt->errorInfo();

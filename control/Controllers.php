@@ -8,16 +8,12 @@ include_once "service/AnnoncesChecking.php";
 
 class Controllers
 {
-    public function loginAction($login, $password, $data, $annoncesCheck)
+    public function loginAction()
     {
-        if ($annoncesCheck->authenticate($login, $password, $data)) {
-            header('Location: /annonces/index.php/annonces');
-            exit();
-        } else {
-            $layout = new Layout("gui/layout.html");
-            $vueLogin = new ViewLogin($layout);
-            $vueLogin->display();
-        }
+        $layout = new Layout("gui/layout.html");
+        $vueLogin = new ViewLogin($layout);
+
+        $vueLogin->display();
     }
 
     public function annoncesAction($login, $password, $data, $annoncesCheck)
