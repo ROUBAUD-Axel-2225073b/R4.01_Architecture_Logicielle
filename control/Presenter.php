@@ -2,13 +2,18 @@
 
 namespace control;
 
+use data\DataAccess;
+use service\AnnoncesChecking;
+
 class Presenter
 {
     protected $annoncesCheck;
+    protected $dataAccess;
 
-    public function __construct($annoncesCheck)
+    public function __construct(AnnoncesChecking $annoncesCheck, DataAccess $dataAccess)
     {
         $this->annoncesCheck = $annoncesCheck;
+        $this->dataAccess = $dataAccess;
     }
 
     public function getAllAnnoncesHTML()

@@ -102,4 +102,43 @@ class DataAccess implements DataAccessInterface
 
         $result->closeCursor();
     }
+
+    public function isAdmin ($login) {
+        $query = 'SELECT login FROM Users WHERE login="' . $login . '" and admin=1';
+        $result = $this->dataAccess->query($query);
+
+        return $result->rowCount() > 0;
+    }
+
+    public function updateUser($login, $newPassword, $newName, $newSurname)
+    {
+        $query = 'UPDATE Users SET password="' . $newPassword . '", name="' . $newName . '", surname="' . $newSurname . '" WHERE login="' . $login . '"';
+        $result = $this->dataAccess->query($query);
+
+        $result->closeCursor();
+    }
+
+    public function updatePost($id, $title, $body, $date)
+    {
+        $query = 'UPDATE Post SET title="' . $title . '", body="' . $body . '", date="' . $date . '" WHERE id=' . $id;
+        $result = $this->dataAccess->query($query);
+
+        $result->closeCursor();
+    }
+    public function deletePost($id)
+    {
+        $query = 'DELETE FROM Post WHERE id=' . $id;
+        $result = $this->dataAccess->query($query);
+
+        $result->closeCursor();
+    }
+
+    public function deleteUser($login)
+    {
+        $query = 'DELETE FROM Users WHERE login="' . $login . '"';
+        $result = $this->dataAccess->query($query);
+
+        $result->closeCursor();
+    }
 }
+

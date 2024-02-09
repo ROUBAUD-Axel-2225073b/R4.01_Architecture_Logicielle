@@ -9,4 +9,7 @@ interface DataAccessInterface
     public function addUser($login, $password, $name, $surname);
     public function userExists($login);
     public function createPost($title, $body, $date);
+    public function isAdmin($login);
+    public function deleteUser($login);
+    public function updatePost($id, $title, $body, $date);
 }

@@ -56,4 +56,19 @@ class AnnoncesChecking
         }
         return null;
     }
+
+    public function updateAnnonce($id, $title, $content, $data)
+    {
+        if (strlen($title) > 20 || strlen($content) > 200) {
+            echo "Le titre doit contenir au maximum 20 caractères et le contenu au maximum 200 caractères.";
+            return;
+        }
+
+        if (!preg_match('/^[a-zA-Z0-9\s]+$/', $title) || !preg_match('/^[a-zA-Z0-9\s]+$/', $content)) {
+            echo "Le titre et le contenu ne doivent contenir que du texte.";
+            return;
+        }
+
+        $data->updatePost($id, $title, $content);
+    }
 }

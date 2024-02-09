@@ -15,7 +15,7 @@ class Controllers
 
         $vueLogin->display();
     }
-
+    // public function loginAction($login, $password, $data, $annoncesCheck)
     public function annoncesAction($login, $password, $data, $annoncesCheck)
     {
         if ($annoncesCheck->authenticate($login, $password, $data)) {
@@ -29,6 +29,33 @@ class Controllers
     public function postAction($id, $data, $annoncesCheck)
     {
         $annoncesCheck->getPost($id, $data);
+    }
+
+
+    public function updatePostAction($id, $title, $body, $date, $data)
+    {
+        $login = $_SESSION['user'];
+        if (!$data->isAdmin($login)) {
+            echo "You are not authorized to perform this action.";
+            return;
+        }
+
+        $data->updatePost($id, $title, $body, $date);
+        header('Location: /annonces/index.php/annonces');
+        exit();
+    }
+
+    public function deletePostAction($id, $data)
+    {
+        $login = $_SESSION['user'];
+        if (!$data->isAdmin($login)) {
+            echo "You are not authorized to perform this action.";
+            return;
+        }
+
+        $data->deletePost($id);
+        header('Location: /annonces/index.php/annonces');
+        exit();
     }
 
     public function createPostAction($title, $body, $date, $data)
@@ -52,8 +79,7 @@ class Controllers
         exit();
     }
 
-
-    public function signupAction($login, $password, $name, $surname, $data)
+    public function signupAction($login, $password, $name, $surname,$admin, $data)
     {
         if (strlen($password) !== 12) {
             echo "Le mot de passe doit contenir exactement 12 caractères.";
@@ -69,4 +95,61 @@ class Controllers
         header('Location: /annonces/index.php');
         exit();
     }
+
+
+
+    public function changePostAction($id, $data)
+    {
+        if (!isset($_SESSION['user'])) {
+            echo "You must be logged in to perform this action.";
+            return;
+        }
+
+        $post = $data->getPost($id);
+        if ($post != null) {
+            $_SESSION['post_to_change'] = $post;
+            header('Location: /annonces/index.php/changepost');
+            exit();
+        }
+        return null;
+    }
+
+    public function blockUserAction($login, $data)
+    {
+        $currentLogin = $_SESSION['user'];
+        if (!$data->isAdmin($currentLogin)) {
+            echo "You are not authorized to perform this action.";
+            return;
+        }
+
+        if (!$data->blockUser($login)) {
+            echo "Failed to block user.";
+            return;
+        }
+
+        header('Location: /annonces/index.php/annonces');
+        exit();
+    }
+
+
+
+    public function deleteUserAction($login, $data)
+    {
+        $currentLogin = $_SESSION['user'];
+        if (!$data->isAdmin($currentLogin)) {
+            echo "You are not authorized to perform this action.";
+            return;
+        }
+
+        if (!$data->deleteUser($login)) {
+            echo "Failed to delete user.";
+            return;
+        }
+
+        header('Location: /annonces/index.php/annonces');
+        exit();
+    }
+
+
+
 }
