@@ -8,12 +8,12 @@ class ViewCreatePost extends View
     {
         parent::__construct($layout);
 
-        $this->title= 'Exemple Annonces Basic PHP: Add Post';
+        $this->title= 'Exemple Annonces Basic PHP: Create Post';
 
         $this->content = "<nav>
             <ul>
                 <li><a href='/annonces/index.php/annonces'>Annonces</a></li>
-                <li><a href='/annonces/index.php/createpost'>Add Post</a></li>
+                <li><a href='/annonces/index.php/createpost'>Create Post</a></li>
             </ul>
         </nav>";
 

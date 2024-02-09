@@ -4,13 +4,18 @@ namespace domaine;
 
 class User
 {
-    protected $login;
-    protected $password;
+    private $login;
+    private $password;
 
     public function __construct($login, $password)
     {
         $this->login = $login;
         $this->password = $password;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     public function getLogin()

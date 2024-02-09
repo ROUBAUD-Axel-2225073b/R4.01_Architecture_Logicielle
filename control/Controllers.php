@@ -1,29 +1,36 @@
 <?php
 
 namespace control;
-use Layout;
-use ViewLogin;
+
+use gui\Layout;
+use gui\ViewLogin;
+
 
 include_once "service/AnnoncesChecking.php";
 
 class Controllers
 {
-    public function loginAction()
-    {
-        $layout = new Layout("gui/layout.html");
-        $vueLogin = new ViewLogin($layout);
-
-        $vueLogin->display();
-    }
-    // public function loginAction($login, $password, $data, $annoncesCheck)
-    public function annoncesAction($login, $password, $data, $annoncesCheck)
+    public function loginAction($login, $password, $data, $annoncesCheck): void
     {
         if ($annoncesCheck->authenticate($login, $password, $data)) {
-            $_SESSION['user'] = $login;
+            header('Location: /annonces/index.php/annonces');
+            exit();
+        } else {
+            $layout = new Layout("gui/layout.html");
+            $vueLogin = new ViewLogin($layout);
+            $vueLogin->display();
         }
-        if (isset($_SESSION['user'])) {
+    }
+    // public function loginAction($login, $password, $data, $annoncesCheck)
+    public function annoncesAction($login, $password, $data, $annoncesCheck): bool
+    {
+
+        if ($annoncesCheck->authenticate($login, $password, $data)) {
             $annoncesCheck->getAllAnnonces($data);
+            return true;
         }
+        else return false;
+
     }
 
     public function postAction($id, $data, $annoncesCheck)
@@ -89,7 +96,7 @@ class Controllers
             echo "Le mot de passe doit contenir des lettres minuscules et majuscules, des chiffres et des caractères spéciaux.";
             return;
         }
-        if (!$data->addUser($login, $password, $name, $surname)) {
+        if (!$data->addUser($login, $password, $name, $surname, $admin)) {
             return;
         }
         header('Location: /annonces/index.php');
@@ -149,7 +156,4 @@ class Controllers
         header('Location: /annonces/index.php/annonces');
         exit();
     }
-
-
-
 }

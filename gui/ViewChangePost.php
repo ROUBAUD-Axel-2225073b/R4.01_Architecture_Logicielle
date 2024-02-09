@@ -1,6 +1,6 @@
 <?php
-
 namespace gui;
+include_once "View.php";
 
 class ViewChangePost extends View
 {
@@ -8,12 +8,14 @@ class ViewChangePost extends View
     {
         parent::__construct($layout);
 
-        $this->title= 'Exemple Annonces Basic PHP: Add Post';
+        $this->title= 'Exemple Annonces Basic PHP: Create Post';
 
         $this->content = "<nav>
             <ul>
                 <li><a href='/annonces/index.php/annonces'>Annonces</a></li>
-                <li><a href='/annonces/index.php/changepost'>Add Post</a></li>
+                <li><a href='/annonces/index.php/createpost'>Create Post</a></li>
+                                <li><a href='/annonces/index.php/changepost'>Change Post</a></li>
+
             </ul>
         </nav>";
 
@@ -25,5 +27,4 @@ class ViewChangePost extends View
     <input type='submit' value='Submit'>
 </form>";
     }
-
 }

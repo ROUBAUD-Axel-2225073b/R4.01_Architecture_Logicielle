@@ -3,19 +3,17 @@
 namespace domaine;
 class Post
 {
-    protected $id;
-    protected $title;
-    protected $body;
-    protected $date;
+    private $id;
+    private $title;
+    private $body;
+    private $date;
 
     public function __construct($id, $title, $body, $date)
     {
         $this->id = $id;
         $this->title = $title;
-        $this->date = $date;
         $this->body = $body;
         $this->date = $date;
-
     }
 
     public function getId()

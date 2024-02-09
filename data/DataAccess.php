@@ -2,143 +2,85 @@
 
 namespace data;
 
+use PDO;
 use domaine\{Post, User};
 use service\DataAccessInterface;
-
-include_once "service/DataAccessInterface.php";
-
-include_once "domaine/Post.php";
-include_once "domaine/User.php";
-
+include_once 'service/DataAccessInterface.php';
+include_once 'domaine/Post.php';
+include_once 'domaine/User.php';
 
 class DataAccess implements DataAccessInterface
 {
-    protected $dataAccess = null;
+    private $pdo;
 
-    public function __construct($dataAccess)
+    public function __construct(PDO $pdo)
     {
-        $this->dataAccess = $dataAccess;
-    }
-
-    public function __destruct()
-    {
-        $this->dataAccess = null;
+        $this->pdo = $pdo;
     }
 
     public function getUser($login, $password)
     {
-        $user = null;
+        $stmt = $this->pdo->prepare('SELECT * FROM Users WHERE login = :login AND password = :password');
+        $stmt->execute(['login' => $login, 'password' => $password]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $query = 'SELECT login FROM Users WHERE login="' . $login . '" and password="' . $password . '"';
-        $result = $this->dataAccess->query($query);
-
-        if ($result->rowCount())
-            $user = new User($login, $password);
-
-        $result->closeCursor();
-
-        return $user;
+        return $user ? new User($user['login'], $user['password']) : null;
     }
 
     public function getAllAnnonces()
     {
-        $result = $this->dataAccess->query('SELECT * FROM Post');
-        $annonces = array();
+        $stmt = $this->pdo->query('SELECT * FROM Post ORDER BY date DESC');
+        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        while ($row = $result->fetch()) {
-            $currentPost = new Post($row['id'], $row['title'], $row['body'], $row['date']);
-            $annonces[] = $currentPost;
-        }
-
-        $result->closeCursor();
-
-        return $annonces;
+        return array_map(function($post) {
+            return new Post($post['id'], $post['title'], $post['body'], $post['date']);
+        }, $posts);
     }
 
     public function getPost($id)
     {
-        $id = intval($id);
-        $result = $this->dataAccess->query('SELECT * FROM Post WHERE id=' . $id);
-        $row = $result->fetch();
+        $stmt = $this->pdo->prepare('SELECT * FROM Post WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $post = new Post($row['id'], $row['title'], $row['body'], $row['date']);
-
-        $result->closeCursor();
-
-        return $post;
-    }
-
-    public function userExists($login)
-    {
-        $query = 'SELECT login FROM Users WHERE login="' . $login . '"';
-        $result = $this->dataAccess->query($query);
-
-        return $result->rowCount() > 0;
+        return $post ? new Post($post['id'], $post['title'], $post['body'], $post['date']) : null;
     }
 
     public function addUser($login, $password, $name, $surname)
     {
-        if ($this->userExists($login)) {
-            echo "Un utilisateur avec cet identifiant existe déjà.";
-            return;
-        }
-
-        $query = 'INSERT INTO Users (login, password, name, surname) VALUES (?, ?, ?, ?)';
-        $stmt = $this->dataAccess->prepare($query);
-        $result = $stmt->execute([$login, $password, $name, $surname]);
-
-
-        if ($result === false) {
-
-            $errorInfo = $stmt->errorInfo();
-            echo "Erreur lors de l'insertion : " . $errorInfo[2];
-        }
+        $stmt = $this->pdo->prepare('INSERT INTO Users (login, password, name, surname) VALUES (:login, :password, :name, :surname)');
+        $stmt->execute(['login' => $login, 'password' => $password, 'name' => $name, 'surname' => $surname]);
     }
 
-    public function createPost($title, $body,$date)
+    public function userExists($login)
     {
-        $query = 'INSERT INTO Post (date,title,body) VALUES ("' . $date . '","' . $title . '","' . $body . '")';
-        $result = $this->dataAccess->query($query);
-
-        $result->closeCursor();
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM Users WHERE login = :login');
+        $stmt->execute(['login' => $login]);
+        return $stmt->fetchColumn() > 0;
     }
 
-    public function isAdmin ($login) {
-        $query = 'SELECT login FROM Users WHERE login="' . $login . '" and admin=1';
-        $result = $this->dataAccess->query($query);
-
-        return $result->rowCount() > 0;
-    }
-
-    public function updateUser($login, $newPassword, $newName, $newSurname)
+    public function createPost($title, $body, $date)
     {
-        $query = 'UPDATE Users SET password="' . $newPassword . '", name="' . $newName . '", surname="' . $newSurname . '" WHERE login="' . $login . '"';
-        $result = $this->dataAccess->query($query);
-
-        $result->closeCursor();
+        $stmt = $this->pdo->prepare('INSERT INTO Post (title, body, date) VALUES (:title, :body, :date)');
+        $stmt->execute(['title' => $title, 'body' => $body, 'date' => $date]);
     }
 
-    public function updatePost($id, $title, $body, $date)
+    public function isAdmin($login)
     {
-        $query = 'UPDATE Post SET title="' . $title . '", body="' . $body . '", date="' . $date . '" WHERE id=' . $id;
-        $result = $this->dataAccess->query($query);
-
-        $result->closeCursor();
-    }
-    public function deletePost($id)
-    {
-        $query = 'DELETE FROM Post WHERE id=' . $id;
-        $result = $this->dataAccess->query($query);
-
-        $result->closeCursor();
+        $stmt = $this->pdo->prepare('SELECT admin FROM Users WHERE login = :login');
+        $stmt->execute(['login' => $login]);
+        return $stmt->fetchColumn() == 1;
     }
 
     public function deleteUser($login)
     {
-        $query = 'DELETE FROM Users WHERE login="' . $login . '"';
-        $result = $this->dataAccess->query($query);
+        $stmt = $this->pdo->prepare('DELETE FROM Users WHERE login = :login');
+        $stmt->execute(['login' => $login]);
+    }
 
-        $result->closeCursor();
+    public function updatePost($id, $title, $body, $date)
+    {
+        $stmt = $this->pdo->prepare('UPDATE Post SET title = :title, body = :body, date = :date WHERE id = :id');
+        $stmt->execute(['id' => $id, 'title' => $title, 'body' => $body, 'date' => $date]);
     }
 }
-

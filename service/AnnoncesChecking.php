@@ -2,6 +2,10 @@
 
 namespace service;
 
+use domaine\Post;
+use domaine\User;
+use data\DataAccessInterface;
+
 class AnnoncesChecking
 {
     protected $annoncesTxt;
@@ -11,28 +15,43 @@ class AnnoncesChecking
         return $this->annoncesTxt;
     }
 
-    public function authenticate($login, $password, $data)
+    public function authenticate($login, $password, DataAccessInterface $data)
     {
-        return ($data->getUser($login, $password) != null);
+        $user = $data->getUser($login, $password);
+        return $user instanceof User;
     }
 
-    public function getAllAnnonces($data)
+    public function getAllAnnonces(DataAccessInterface $data)
     {
         $annonces = $data->getAllAnnonces();
 
         $this->annoncesTxt = array();
         foreach ($annonces as $post) {
-            $this->annoncesTxt[] = ['id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate()];
+            if ($post instanceof Post) {
+                $this->annoncesTxt[] = [
+                    'id' => $post->getId(),
+                    'title' => $post->getTitle(),
+                    'body' => $post->getBody(),
+                    'date' => $post->getDate()
+                ];
+            }
         }
     }
 
-    public function getPost($id, $data)
+    public function getPost($id, DataAccessInterface $data)
     {
         $post = $data->getPost($id);
-        $this->annoncesTxt[] = array('id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate());
+        if ($post instanceof Post) {
+            $this->annoncesTxt[] = [
+                'id' => $post->getId(),
+                'title' => $post->getTitle(),
+                'body' => $post->getBody(),
+                'date' => $post->getDate()
+            ];
+        }
     }
 
-    public function addPost($title, $body, $data)
+    public function addPost($title, $body, DataAccessInterface $data)
     {
         if (strlen($title) > 20 || strlen($body) > 200) {
             echo "Le titre doit contenir au maximum 20 caractères et le contenu au maximum 200 caractères.";
@@ -44,7 +63,7 @@ class AnnoncesChecking
             return false;
         }
 
-        return $data->addPost($title, $body);
+        return $data->createPost($title, $body, date('Y-m-d'));
     }
 
     public function getAnnonceById($id)
@@ -57,7 +76,7 @@ class AnnoncesChecking
         return null;
     }
 
-    public function updateAnnonce($id, $title, $content, $data)
+    public function updateAnnonce($id, $title, $content, DataAccessInterface $data)
     {
         if (strlen($title) > 20 || strlen($content) > 200) {
             echo "Le titre doit contenir au maximum 20 caractères et le contenu au maximum 200 caractères.";
@@ -69,6 +88,6 @@ class AnnoncesChecking
             return;
         }
 
-        $data->updatePost($id, $title, $content);
+        $data->updatePost($id, $title, $content, date('Y-m-d'));
     }
 }

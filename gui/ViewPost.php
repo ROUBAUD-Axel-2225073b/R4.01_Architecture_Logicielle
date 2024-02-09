@@ -2,18 +2,19 @@
 
 namespace gui;
 
+use domaine\Post;
 use control\Presenter;
 use data\DataAccess;
+use gui\Layout;
 
-class ViewPost
+class ViewPost extends View
 {
-    private $layout;
     private $presenter;
     private $dataAccess;
 
     public function __construct(Layout $layout, Presenter $presenter, DataAccess $dataAccess)
     {
-        $this->layout = $layout;
+        parent::__construct($layout);
         $this->presenter = $presenter;
         $this->dataAccess = $dataAccess;
     }
