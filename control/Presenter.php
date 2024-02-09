@@ -1,6 +1,7 @@
 <?php
 
 namespace control;
+
 class Presenter
 {
     protected $annoncesCheck;
@@ -23,5 +24,16 @@ class Presenter
             $content .= '</ul>';
         }
         return $content;
+    }
+
+    public function getCurrentPostHTML($id)
+    {
+        $post = $this->annoncesCheck->getAnnonceById($id);
+        if ($post != null) {
+            $content = '<h1>' . $post['title'] . '</h1>';
+            $content .= '<p>' . $post['body'] . '</p>';
+            return $content;
+        }
+        return null;
     }
 }

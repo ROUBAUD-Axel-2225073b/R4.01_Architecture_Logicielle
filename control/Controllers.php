@@ -38,6 +38,21 @@ class Controllers
         exit();
     }
 
+    public function updateAnnonceAction($id, $title, $content, $annoncesCheck)
+    {
+        $annoncesCheck->updateAnnonce($id, $title, $content);
+        header('Location: /annonces/index.php/annonces');
+        exit();
+    }
+
+    public function deleteAnnonceAction($id, $annoncesCheck)
+    {
+        $annoncesCheck->deleteAnnonce($id);
+        header('Location: /annonces/index.php/annonces');
+        exit();
+    }
+
+
     public function signupAction($login, $password, $name, $surname, $data)
     {
         if (strlen($password) !== 12) {

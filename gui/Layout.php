@@ -18,4 +18,9 @@ class Layout
         echo $page;
     }
 
+    public function render($content)
+    {
+        $this->display('',$content);
+    }
+
 }

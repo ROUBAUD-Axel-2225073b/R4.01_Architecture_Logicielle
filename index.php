@@ -14,6 +14,7 @@ include_once 'gui/ViewAnnonces.php';
 include_once 'gui/ViewPost.php';
 include_once 'gui/Layout.php';
 include_once 'gui/ViewSignup.php';
+
 include_once 'gui/ViewCreatePost.php';
 
 use control\{Controllers, Presenter};
@@ -68,15 +69,13 @@ elseif ( '/annonces/index.php/annonces' == $uri
 }
 
 
-elseif ( '/annonces/index.php/post' == $uri
-    && isset($_GET['id'])) {
-
+elseif ( '/annonces/index.php/post' == $uri && isset($_GET['id'])) {
     $controller->postAction($_GET['id'], $data, $annoncesCheck);
 
-    $layout = new Layout("gui/layout.html" );
-    $vuePost= new ViewPost( $layout, $presenter );
+    $layout = new Layout("gui/layout.html");
+    $vuePost = new ViewPost($layout, $presenter);
 
-    $vuePost->display();
+    $vuePost->render();
 }
 
 elseif('/annonces/index.php/createpost' == $uri) {
@@ -94,6 +93,7 @@ elseif('/annonces/index.php/createpost' == $uri) {
     $vueAddPost= new ViewCreatePost($layout);
     $vueAddPost->display();
 }
+
 
 elseif('/annonces/index.php/signup' == $uri) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {

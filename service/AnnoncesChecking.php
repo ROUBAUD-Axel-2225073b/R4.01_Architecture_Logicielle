@@ -1,6 +1,7 @@
 <?php
 
 namespace service;
+
 class AnnoncesChecking
 {
     protected $annoncesTxt;
@@ -25,11 +26,9 @@ class AnnoncesChecking
         }
     }
 
-
     public function getPost($id, $data)
     {
         $post = $data->getPost($id);
-
         $this->annoncesTxt[] = array('id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate());
     }
 
@@ -48,4 +47,13 @@ class AnnoncesChecking
         return $data->addPost($title, $body);
     }
 
+    public function getAnnonceById($id)
+    {
+        foreach ($this->annoncesTxt as $annonce) {
+            if ($annonce['id'] == $id) {
+                return $annonce;
+            }
+        }
+        return null;
+    }
 }

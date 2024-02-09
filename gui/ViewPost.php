@@ -1,16 +1,24 @@
 <?php
+
 namespace gui;
-include_once "View.php";
 
-class ViewPost extends View
+use control\Presenter;
+
+class ViewPost
 {
-    public function __construct($layout,$presenter)
+    private $layout;
+    private $presenter;
+
+    public function __construct(Layout $layout, Presenter $presenter)
     {
-        parent::__construct($layout);
+        $this->layout = $layout;
+        $this->presenter = $presenter;
+    }
 
-        $this->title= 'Exemple Annonces Basic PHP: Post';
-
-
-        $this->content .= $presenter -> getCurrentPostHTML();
+    public function render()
+    {
+        $postId = $_GET['id']; // Get the ID of the post from the URL
+        $html = $this->presenter->getCurrentPostHTML($postId);
+        $this->layout->render($html);
     }
 }
