@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>PHP</ID>
+  <OriginalElement>\service\DataAccessInterface</OriginalElement>
+  <nodes>
+    <node x="163.0" y="679.0">\control\Controllers</node>
+    <node x="-84.0" y="679.0">\domaine\Post</node>
+    <node x="530.0" y="580.0">\gui\ViewCreatePost</node>
+    <node x="689.0" y="580.0">\gui\ViewSignup</node>
+    <node x="128.0" y="580.0">\gui\ViewAnnonces</node>
+    <node x="373.0" y="453.0">\gui\View</node>
+    <node x="-84.0" y="867.0">\control\Presenter</node>
+    <node x="-84.0" y="-15.0">\service\DataAccessInterface</node>
+    <node x="540.0" y="679.0">\service\AnnoncesChecking</node>
+    <node x="373.0" y="580.0">\gui\ViewLogin</node>
+    <node x="149.0" y="867.0">\domaine\User</node>
+    <node x="-84.0" y="580.0">\gui\ViewPost</node>
+    <node x="381.0" y="867.0">\gui\Layout</node>
+    <node x="-84.0" y="199.0">\data\DataAccess</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="\gui\ViewCreatePost" target="\gui\View" relationship="GENERALIZATION">
+      <point x="0.0" y="-27.0" />
+      <point x="599.5" y="555.0" />
+      <point x="441.5" y="555.0" />
+      <point x="0.0" y="38.5" />
+    </edge>
+    <edge source="\gui\ViewAnnonces" target="\gui\View" relationship="GENERALIZATION">
+      <point x="0.0" y="-27.0" />
+      <point x="240.5" y="555.0" />
+      <point x="441.5" y="555.0" />
+      <point x="0.0" y="38.5" />
+    </edge>
+    <edge source="\gui\ViewPost" target="\gui\View" relationship="GENERALIZATION">
+      <point x="0.0" y="-27.0" />
+      <point x="12.0" y="555.0" />
+      <point x="441.5" y="555.0" />
+      <point x="0.0" y="38.5" />
+    </edge>
+    <edge source="\gui\ViewLogin" target="\gui\View" relationship="GENERALIZATION">
+      <point x="0.0" y="-27.0" />
+      <point x="0.0" y="38.5" />
+    </edge>
+    <edge source="\data\DataAccess" target="\service\DataAccessInterface" relationship="REALIZATION">
+      <point x="0.0" y="-104.5" />
+      <point x="0.0" y="82.0" />
+    </edge>
+    <edge source="\gui\ViewSignup" target="\gui\View" relationship="GENERALIZATION">
+      <point x="0.0" y="-27.0" />
+      <point x="757.5" y="555.0" />
+      <point x="441.5" y="555.0" />
+      <point x="0.0" y="38.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.6945863125638406" showDependencies="false" x="393.95735294117645" y="339.167647058825" />
+  <SelectedNodes>
+    <node>\service\DataAccessInterface</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
