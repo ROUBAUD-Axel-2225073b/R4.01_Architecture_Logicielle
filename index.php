@@ -17,7 +17,7 @@ include_once 'gui/ViewAnnonces.php';
 include_once 'gui/ViewPost.php';
 include_once 'gui/ViewError.php';
 
-use gui\{ViewLogin, ViewAnnonces, ViewPost, ViewError, Layout};
+use gui\{ViewAnnoncesAlternance, ViewCompanyAlternance, ViewLogin, ViewAnnonces, ViewPost, ViewError, Layout};
 use control\{Controllers, Presenter};
 use data\{AnnonceSqlAccess, ApiAlternance,UserSqlAccess};
 use service\{AnnoncesChecking, UserChecking};
@@ -50,8 +50,9 @@ $presenter = new Presenter($annoncesCheck);
 // (p.ex. /annonces/index.php)
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-$apilateranntce = new ApiAlternance();
-var_dump($apilateranntce->getAllAnnonces());
+$apiAlternance = new ApiAlternance();
+$result = $apiAlternance->getAllAnnonces();
+var_dump($result);
 
 // définition d'une session d'une heure
 ini_set('session.gc_maxlifetime', 3600);
@@ -82,6 +83,29 @@ if ( '/annonces/' == $uri || '/annonces/index.php' == $uri || '/annonces/index.p
 
     $vueLogin->display();
 }
+
+elseif ( '/annonces/index.php/annoncesAlternance' == $uri ){
+    // Affichage de toutes les entreprises offrant de l'alternance
+
+    $controller->annoncesAction($apiAlternance, $annoncesCheck);
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vueAnnoncesAlternance= new ViewAnnoncesAlternance( $layout,  $_SESSION['login'], $presenter);
+
+    $vueAnnoncesAlternance->display();
+}
+elseif ( '/annonces/index.php/companyAlternance' == $uri
+    && isset($_GET['id'])) {
+    // Affichage d'une entreprise offrant de l'alternance
+
+    $controller->postAction($_GET['id'], $apiAlternance, $annoncesCheck);
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vuePostAlternance = new ViewCompanyAlternance( $layout,  $_SESSION['login'], $presenter );
+
+    $vuePostAlternance->display();
+}
+
 elseif ( '/annonces/index.php/annonces' == $uri ){
     // affichage de toutes les annonces
 
@@ -111,6 +135,7 @@ elseif ( '/annonces/index.php/error' == $uri ){
 
     $vueError->display();
 }
+
 else {
     header('Status: 404 Not Found');
     echo '<html><body><h1>My Page NotFound</h1></body></html>';

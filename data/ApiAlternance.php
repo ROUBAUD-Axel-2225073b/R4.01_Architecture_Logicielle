@@ -2,6 +2,7 @@
 
 namespace data;
 
+use domain\Post;
 use service\AnnonceAccessInterface;
 include_once "service/AnnonceAccessInterface.php";
 class ApiAlternance implements AnnonceAccessInterface
@@ -17,7 +18,7 @@ class ApiAlternance implements AnnonceAccessInterface
         $inseeAix = '13100';
 
         // URL de l'API
-        $apiUrl = "https://labonnealternance-recette.apprentissage.beta.gouv.fr/api/V1/jobs";
+        $apiUrl = "https://labonnealternance-recette.apprentissage.beta.gouv.fr/api/v1/jobs?romes=M1801%2CM1810&caller=contact%40domaine%20nom_de_societe&latitude=43.5283&longitude=5.44973&radius=100&insee=13100";
 
         // paramètres de la requête HTTP
         $query ='?romes='.$romes.'&latitude='.$latitudeAix.'&longitude='.$longitudeAix.'&radius='.$radius.'&insee='.$inseeAix.'&sources=&caller=contact%40domaine%20nom_de_societe&opco=AKTO%7CAFDAS%7CATLAS%7CCONSTRUCTYS%7COPCOMMERCE%7COCAPIAT%7COPCO2I%7CEP%7CMOBILITE%7CSANTE%7CUNIFORMATION';
