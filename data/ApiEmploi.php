@@ -13,8 +13,8 @@ class ApiEmploi
 
         $auth_data = array(
             "grant_type" => "client_credentials",
-            "client_id" => CLIENT_ID,
-            "client_secret" => CLIENT_SECRET,
+            "client_id" => "PAR_annonces_05a8bba7a9a4594556cef55031d20c587f5d3a302c5a0139a7c9194ded767003",
+            "client_secret" => "58381780b41275d726e87dd873bacbab9d37277345696eca31b9a9ac653158b9",
             "scope" => "api_offresdemploiv2 o2dsoffre"
         );
 
