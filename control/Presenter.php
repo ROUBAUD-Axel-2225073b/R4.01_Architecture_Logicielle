@@ -24,6 +24,21 @@ class Presenter
         return $content;
     }
 
+    public function getAllEmploiHTML()
+    {
+        $content = null;
+        if ($this->annoncesCheck->getAnnoncesTxt() != null) {
+            $content = '<h1>List of Jobs</h1>  <ul>';
+            foreach ($this->annoncesCheck->getAnnoncesTxt() as $post) {
+                $content .= ' <li>';
+                $content .= '<a href="/annonces/index.php/offreEmploi?id=' . $post['id'] . '">' . $post['title'] . '</a>';
+                $content .= ' </li>';
+            }
+            $content .= '</ul>';
+        }
+        return $content;
+    }
+
     public function getCurrentPostHTML()
     {
         $content = null;

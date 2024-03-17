@@ -4,6 +4,7 @@
 include_once 'data/AnnonceSqlAccess.php';
 include_once 'data/UserSqlAccess.php';
 include_once 'data/ApiAlternance.php';
+include_once 'data/ApiEmploi.php';
 
 include_once 'control/Controllers.php';
 include_once 'control/Presenter.php';
@@ -15,11 +16,23 @@ include_once 'gui/Layout.php';
 include_once 'gui/ViewLogin.php';
 include_once 'gui/ViewAnnonces.php';
 include_once 'gui/ViewPost.php';
+include_once 'gui/ViewAnnoncesAlternance.php';
+include_once 'gui/ViewCompanyAlternance.php';
+include_once 'gui/ViewAnnoncesEmploi.php';
+include_once 'gui/ViewOffreEmploi.php';
 include_once 'gui/ViewError.php';
 
-use gui\{ViewAnnoncesAlternance, ViewCompanyAlternance, ViewLogin, ViewAnnonces, ViewPost, ViewError, Layout};
+use gui\{ViewAnnoncesAlternance,
+    ViewAnnoncesEmploi,
+    ViewCompanyAlternance,
+    ViewLogin,
+    ViewAnnonces,
+    ViewOffreEmploi,
+    ViewPost,
+    ViewError,
+    Layout};
 use control\{Controllers, Presenter};
-use data\{AnnonceSqlAccess, ApiAlternance,UserSqlAccess};
+use data\{AnnonceSqlAccess, ApiAlternance,UserSqlAccess, ApiEmploi};
 use service\{AnnoncesChecking, UserChecking};
 
 $data = null;
@@ -46,6 +59,10 @@ $userCheck = new UserChecking() ;
 // intialisation du presenter avec accès aux données de AnnoncesCheking
 $presenter = new Presenter($annoncesCheck);
 
+// initialiser la source de données "API Emploi"
+$apiEmploi = new ApiEmploi();
+$token = $apiEmploi->getToken() ;
+echo $token['access_token'];
 // chemin de l'URL demandée au navigateur
 // (p.ex. /annonces/index.php)
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -83,6 +100,16 @@ if ( '/annonces/' == $uri || '/annonces/index.php' == $uri || '/annonces/index.p
 
     $vueLogin->display();
 }
+elseif ( '/annonces/index.php/OffreEmploi' == $uri && isset($_GET['id'])) {
+    // affichage de toutes les offres d'emploi
+
+    $controller->postAction($_GET['id'], $apiEmploi, $annoncesCheck);
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vuePostEmploi= new ViewOffreEmploi( $layout,  $_SESSION['login'], $presenter);
+
+    $vuePostEmploi->display();
+}
 
 elseif ( '/annonces/index.php/annoncesAlternance' == $uri ){
     // Affichage de toutes les entreprises offrant de l'alternance
@@ -105,6 +132,20 @@ elseif ( '/annonces/index.php/companyAlternance' == $uri
 
     $vuePostAlternance->display();
 }
+
+elseif ( '/annonces/index.php/annoncesEmploi' == $uri ){
+    // affichage de toutes les offres d'emploi
+
+    $controller->annoncesAction($apiEmploi, $annoncesCheck);
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vueAnnoncesEmploi= new ViewAnnoncesEmploi( $layout,  $_SESSION['login'], $presenter);
+
+    $vueAnnoncesEmploi->display();
+}
+
+
+
 
 elseif ( '/annonces/index.php/annonces' == $uri ){
     // affichage de toutes les annonces
