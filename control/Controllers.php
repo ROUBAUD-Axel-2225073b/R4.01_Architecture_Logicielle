@@ -42,4 +42,9 @@ class Controllers
     {
         $annoncesCheck->getPost($id, $data);
     }
+
+    public function annonceCreationAction($id, $info, $data, $annonceCreation)
+    {
+        $annonceCreation->createAnnonce($id, $info, $data);
+    }
 }

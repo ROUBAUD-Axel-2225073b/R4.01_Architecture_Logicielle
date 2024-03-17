@@ -11,6 +11,7 @@ include_once 'control/Presenter.php';
 
 include_once 'service/AnnoncesChecking.php';
 include_once 'service/UserChecking.php';
+include_once 'service/AnnonceCreation.php';
 
 include_once 'gui/Layout.php';
 include_once 'gui/ViewLogin.php';
@@ -25,6 +26,7 @@ include_once 'gui/ViewError.php';
 use gui\{ViewAnnoncesAlternance,
     ViewAnnoncesEmploi,
     ViewCompanyAlternance,
+    ViewCreateAnnonce,
     ViewLogin,
     ViewAnnonces,
     ViewOffreEmploi,
@@ -33,7 +35,7 @@ use gui\{ViewAnnoncesAlternance,
     Layout};
 use control\{Controllers, Presenter};
 use data\{AnnonceSqlAccess, ApiAlternance,UserSqlAccess, ApiEmploi};
-use service\{AnnoncesChecking, UserChecking};
+use service\{AnnoncesChecking, UserChecking, AnnonceCreation};
 
 $data = null;
 try {
@@ -147,9 +149,11 @@ elseif ( '/annonces/index.php/annoncesEmploi' == $uri ){
 
 
 
-elseif ( '/annonces/index.php/annonces' == $uri ){
+elseif ( '/annonces/index.php/annonces' == $uri) {
+    if (isset($_POST['contractType'])) {
+        $controller->annonceCreationAction($_SESSION['login'], $_POST, $dataAnnonces, $annonceCreation);
+    }
     // affichage de toutes les annonces
-
     $controller->annoncesAction($dataAnnonces, $annoncesCheck);
 
     $layout = new Layout("gui/layout.html" );
@@ -157,6 +161,7 @@ elseif ( '/annonces/index.php/annonces' == $uri ){
 
     $vueAnnonces->display();
 }
+
 elseif ( '/annonces/index.php/post' == $uri
     && isset($_GET['id'])) {
     // Affichage d'une annonce
@@ -167,6 +172,15 @@ elseif ( '/annonces/index.php/post' == $uri
     $vuePost= new ViewPost( $layout,  $_SESSION['login'], $presenter );
 
     $vuePost->display();
+}
+
+elseif ( '/annonces/index.php/createAnnonce' == $uri ){
+    // affichage du formulaire de création d'une annonce
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vueCreateAnnonce = new ViewCreateAnnonce( $layout );
+
+    $vueCreateAnnonce->display();
 }
 elseif ( '/annonces/index.php/error' == $uri ){
     // Affichage d'un message d'erreur
@@ -183,3 +197,5 @@ else {
 }
 
 ?>
+
+}

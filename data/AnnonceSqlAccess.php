@@ -51,6 +51,24 @@ class AnnonceSqlAccess implements DataAccessInterface
 
         return $post;
     }
-}
 
-?>
+    public function createAnnonce($login, $info)
+    {
+        $query = 'INSERT INTO Post(date, title, body, login, location, contactMail, contractType)
+            VALUES("' . date('Y-m-d H:i:s') . '","'
+            . $info['title'] . '","'
+            . $info['body'] . '","'
+            . $login . '","'
+            . $info['location'] . '","'
+            . $info['contactMail'] . '","'
+            . $info['contractType'] . '")';
+
+        try {
+            $this->dataAccess->query($query);
+        }
+        catch ( \PDOException $e){
+            return false;
+        }
+        return true;
+    }
+}
