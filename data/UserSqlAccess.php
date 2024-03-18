@@ -26,7 +26,7 @@ class UserSqlAccess implements UserAccessInterface
     {
         $user = null;
 
-        $query = 'SELECT * FROM User WHERE login="' . $login . '" and password="' . $password . '"';
+        $query = 'SELECT * FROM Users WHERE login="' . $login . '" and password="' . $password . '"';
         $result = $this->dataAccess->query($query);
 
         if ( $row = $result->fetch() )
