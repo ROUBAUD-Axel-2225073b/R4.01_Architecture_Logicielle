@@ -18,10 +18,10 @@ class ApiAlternance implements AnnonceAccessInterface
         $inseeAix = '13100';
 
         // URL de l'API
-        $apiUrl = "https://labonnealternance-recette.apprentissage.beta.gouv.fr/api/v1/jobs?romes=M1801%2CM1810&caller=contact%40domaine%20nom_de_societe&latitude=43.5283&longitude=5.44973&radius=100&insee=13100";
+        $apiUrl = "https://labonnealternance-recette.apprentissage.beta.gouv.fr/api/V1/jobs";
 
         // paramètres de la requête HTTP
-        $query ='?romes='.$romes.'&latitude='.$latitudeAix.'&longitude='.$longitudeAix.'&radius='.$radius.'&insee='.$inseeAix.'&sources=&caller=contact%40domaine%20nom_de_societe&opco=AKTO%7CAFDAS%7CATLAS%7CCONSTRUCTYS%7COPCOMMERCE%7COCAPIAT%7COPCO2I%7CEP%7CMOBILITE%7CSANTE%7CUNIFORMATION';
+        $query ='?romes='.$romes.'&caller=contact%40domaine%20nom_de_societe&latitude='.$latitudeAix.'&longitude='.$longitudeAix.'&radius='.$radius.'&insee='.$inseeAix;
 
         // initialisation de la connexion à l'API avec CURL
         $curlConnection  = curl_init();
@@ -46,16 +46,25 @@ class ApiAlternance implements AnnonceAccessInterface
 
         // parcours du tableau associatif pour extraire les
         // entreprises à fort potentiel de recrutement en alternance dans la région d'Aix
+        // /!\ modifications au code de l'énoncé: si il manque des informations, on évite de les afficher pour éviter les erreurs
+        // /!\ modifications au code de l'énoncé: on utilise l'index comme identifiant unique pour lister toutes les annonces (la version de l'énoncé n'en affiche qu'une ?)
         $annonces = array();
-        foreach ( $response['lbaCompanies']['results'] as $entreprise){
-
-            $id = $entreprise['company']['siret'];
+        foreach ($response['peJobs']['results'] as $index => $entreprise) {
+            $id = $index; // Using the index as the unique identifier
             $title = $entreprise['title'];
-            $body = $entreprise['nafs'][0]['label'].'; '.$entreprise['contact']['email'].'; '.$entreprise['place']['fullAddress'];
 
-            $currentPost = new Post($id, $title, $body, date("Y-m-d H:i:s") );
+            // Check if 'nafs', 'contact', and 'place' are set and not null
+            $nafsLabel = $entreprise['nafs'][0]['label'] ?? '';
+            $email = $entreprise['contact']['email'] ?? '';
+            $fullAddress = $entreprise['place']['fullAddress'] ?? '';
+
+            // Construct body, handling potential null values
+            $body = $nafsLabel . '; ' . $email . '; ' . $fullAddress;
+
+            $currentPost = new Post($id, $title, $body, date("Y-m-d H:i:s"));
             $annonces[$id] = $currentPost;
         }
+
 
         // enregistrement des annonces dans un fichier sur le serveur (serialisation)
         $annoncesSerialized = serialize($annonces);

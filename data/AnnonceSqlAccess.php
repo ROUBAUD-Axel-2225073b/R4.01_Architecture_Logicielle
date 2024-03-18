@@ -5,7 +5,7 @@ namespace data;
 use service\DataAccessInterface;
 include_once "service/DataAccessInterface.php";
 
-use domain\{User,Post};
+use domain\{Post};
 include_once "domain/User.php";
 include_once "domain/Post.php";
 
@@ -23,14 +23,13 @@ class AnnonceSqlAccess implements DataAccessInterface
         $this->dataAccess = null;
     }
 
-
     public function getAllAnnonces()
     {
         $result = $this->dataAccess->query('SELECT * FROM Post');
         $annonces = array();
 
         while ($row = $result->fetch()) {
-            $currentPost = new Post($row['id'], $row['title'], $row['body'], $row['date']);
+            $currentPost = new Post($row['id'], $row['title'], $row['content'], $row['date']);
             $annonces[] = $currentPost;
         }
 
@@ -45,7 +44,7 @@ class AnnonceSqlAccess implements DataAccessInterface
         $result = $this->dataAccess->query('SELECT * FROM Post WHERE id=' . $id);
         $row = $result->fetch();
 
-        $post = new Post($row['id'], $row['title'], $row['body'], $row['date']);
+        $post = new Post($row['id'], $row['title'], $row['content'], $row['date']);
 
         $result->closeCursor();
 
@@ -54,7 +53,7 @@ class AnnonceSqlAccess implements DataAccessInterface
 
     public function createAnnonce($login, $info)
     {
-        $query = 'INSERT INTO Post(date, title, body, login, location, contactMail, contractType)
+        $query = 'INSERT INTO Post(date, title, content, login, location, contactMail, contractType)
             VALUES("' . date('Y-m-d H:i:s') . '","'
             . $info['title'] . '","'
             . $info['body'] . '","'

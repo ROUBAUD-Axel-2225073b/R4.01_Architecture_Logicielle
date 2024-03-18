@@ -1,11 +1,13 @@
 <?php
 
 namespace data;
+
 use domain\Post;
 use service\AnnonceAccessInterface;
-include_once "service/AnnonceAccessInterface.php";
-class ApiEmploi
+
+class ApiEmploi implements AnnonceAccessInterface
 {
+
     function getToken(){
         $curl = curl_init();
 
@@ -44,45 +46,45 @@ class ApiEmploi
     {
         $token = $this->getToken();
 
-
         $api_url = "https://api.emploi-store.fr/partenaire/offresdemploi/v2/offres/search";
+
         $curlConnection = curl_init();
         $params = array(
-            CURLOPT_URL =>  $api_url."?sort=1&domaine=M18",
+            CURLOPT_URL => $api_url . "?sort=1&domaine=M18",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => array(
-                "Authorization: Bearer ".$token['access_token']
-            )
+                "Authorization: Bearer " . $token['access_token'])
         );
-
         curl_setopt_array($curlConnection, $params);
-
         $response = curl_exec($curlConnection);
         curl_close($curlConnection);
 
-        if(!$response)
-            echo curl_error($curlConnection);
+        if (!$response)
+            curl_error($curlConnection);
 
-        return json_decode($response, true);
+        $response = json_decode($response, true);
 
+        // Parcours du tableau associatif pour extraire les offres dans
+        // le domaine des d'information et de télécommunication
         $annonces = array();
-        foreach ( $response['resultats'] as $offre){
+        foreach ($response['resultats'] as $offre) {
             $id = $offre['id'];
             $title = $offre['intitule'];
             $body = $offre['description'];
+            if (isset($offre['salaire '] ['libelle']))
+                $body .= '; ' . $offre['salaire '] ['libelle'];
+            if (isset($offre['entreprise']['nom']))
+                $body .= '; ' . $offre['entreprise'] ['nom'];
+            if (isset($offre['contact']['coordonnees']))
+                $body .= '; ' . $offre['contact']['coordonnees'];
 
-            if( isset($offre['salaire']['libelle']))
-                $body .= '; '.$offre['salaire']['libelle'];
-            if (isset ($offre['entreprise']['nom']))
-                $body .= '; '.$offre['entreprise']['nom'];
-            if (isset ($offre['contact']['coordonnees1']))
-                $body .= '; '.$offre['contact']['coordonnees1'];
-
-            $currentPost = new Post($id, $title, $body, date("Y-m-d H:i:s") );
+            $currentPost = new Post($id, $title, $body, date("Y-m-d H:i:s"));
             $annonces[$id] = $currentPost;
         }
+
         return $annonces;
     }
+
     public function getPost($id)
     {
         $token = $this->getToken() ;
@@ -118,4 +120,5 @@ class ApiEmploi
 
         return  new Post($id, $title, $body, date("Y-m-d H:i:s") );
     }
+
 }

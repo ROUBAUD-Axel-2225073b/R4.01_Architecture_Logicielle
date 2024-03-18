@@ -26,11 +26,11 @@ class UserSqlAccess implements UserAccessInterface
     {
         $user = null;
 
-        $query = 'SELECT * FROM Users WHERE login="' . $login . '" and password="' . $password . '"';
+        $query = 'SELECT * FROM User WHERE login="' . $login . '" and password="' . $password . '"';
         $result = $this->dataAccess->query($query);
 
         if ( $row = $result->fetch() )
-            $user = new User( $row['login'] , $row['password'], $row['name'], $row['firstName'], $row['date'] );
+            $user = new User( $row['login'] , $row['password']);
 
         $result->closeCursor();
 

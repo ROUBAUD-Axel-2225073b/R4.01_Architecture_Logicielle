@@ -39,7 +39,8 @@ class ViewCreateAnnonce extends View
                 <input type="reset"> 
             </form>
             <a href="/annonces/index.php/annonces">retour</a>
-            <script src="/annonces/gui/js/viewwCreateAnnonceForm.js"></script>
+            
+            <script src="/annonces/gui/js/viewCreateAnnonceForm.js"></script>
             ';
     }
 }

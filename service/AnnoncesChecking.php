@@ -10,7 +10,6 @@ class AnnoncesChecking
         return $this->annoncesTxt;
     }
 
-
     public function getAllAnnonces($data)
     {
         $annonces = $data->getAllAnnonces();

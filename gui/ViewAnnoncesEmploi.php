@@ -2,15 +2,17 @@
 
 namespace gui;
 
-include_once "View.php";
+include_once 'View.php';
+
 class ViewAnnoncesEmploi extends View
 {
     public function __construct($layout, $login, $presenter)
     {
         parent::__construct($layout, $login);
 
-        $this->title= 'Exemple Annonces Basic PHP: Annonces Emploi';
+        $this->title = "Exemple Annonces basique PHP: Offres d'emploi";
 
-        $this->content = $presenter->getAllAnnonces();
+        $this->content = $presenter->getAllEmploiHTML();
     }
+
 }

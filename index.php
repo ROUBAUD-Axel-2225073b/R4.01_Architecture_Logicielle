@@ -17,11 +17,12 @@ include_once 'gui/Layout.php';
 include_once 'gui/ViewLogin.php';
 include_once 'gui/ViewAnnonces.php';
 include_once 'gui/ViewPost.php';
-include_once 'gui/ViewAnnoncesAlternance.php';
+include_once 'gui/ViewError.php';
 include_once 'gui/ViewCompanyAlternance.php';
+include_once 'gui/ViewAnnoncesAlternance.php';
 include_once 'gui/ViewAnnoncesEmploi.php';
 include_once 'gui/ViewOffreEmploi.php';
-include_once 'gui/ViewError.php';
+include_once 'gui/ViewCreateAnnonce.php';
 
 use gui\{ViewAnnoncesAlternance,
     ViewAnnoncesEmploi,
@@ -34,8 +35,8 @@ use gui\{ViewAnnoncesAlternance,
     ViewError,
     Layout};
 use control\{Controllers, Presenter};
-use data\{AnnonceSqlAccess, ApiAlternance,UserSqlAccess, ApiEmploi};
-use service\{AnnoncesChecking, UserChecking, AnnonceCreation};
+use data\{AnnonceSqlAccess, ApiAlternance, ApiEmploi, UserSqlAccess};
+use service\{AnnonceCreation, AnnoncesChecking, UserChecking};
 
 $data = null;
 try {
@@ -56,22 +57,24 @@ $controller = new Controllers();
 $annoncesCheck = new AnnoncesChecking() ;
 
 // intialisation du cas d'utilisation service\UserChecking
-$userCheck = new UserChecking() ;
+$userCheck = new UserChecking();
+
+// initialisation du cas d'utilisation service\AnnonceCreation
+$annonceCreation = new AnnonceCreation();
 
 // intialisation du presenter avec accès aux données de AnnoncesCheking
 $presenter = new Presenter($annoncesCheck);
 
+// initialisation de l'API alternance
+$apiAlternance = new ApiAlternance();
+
 // initialiser la source de données "API Emploi"
 $apiEmploi = new ApiEmploi();
-$token = $apiEmploi->getToken() ;
-echo $token['access_token'];
+$token = $apiEmploi->getToken();
+
 // chemin de l'URL demandée au navigateur
 // (p.ex. /annonces/index.php)
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-$apiAlternance = new ApiAlternance();
-$result = $apiAlternance->getAllAnnonces();
-var_dump($result);
 
 // définition d'une session d'une heure
 ini_set('session.gc_maxlifetime', 3600);
@@ -102,78 +105,32 @@ if ( '/annonces/' == $uri || '/annonces/index.php' == $uri || '/annonces/index.p
 
     $vueLogin->display();
 }
-elseif ( '/annonces/index.php/OffreEmploi' == $uri && isset($_GET['id'])) {
-    // affichage de toutes les offres d'emploi
-
-    $controller->postAction($_GET['id'], $apiEmploi, $annoncesCheck);
-
-    $layout = new Layout("gui/layoutLogged.html" );
-    $vuePostEmploi= new ViewOffreEmploi( $layout,  $_SESSION['login'], $presenter);
-
-    $vuePostEmploi->display();
-}
-
-elseif ( '/annonces/index.php/annoncesAlternance' == $uri ){
-    // Affichage de toutes les entreprises offrant de l'alternance
-
-    $controller->annoncesAction($apiAlternance, $annoncesCheck);
-
-    $layout = new Layout("gui/layoutLogged.html" );
-    $vueAnnoncesAlternance= new ViewAnnoncesAlternance( $layout,  $_SESSION['login'], $presenter);
-
-    $vueAnnoncesAlternance->display();
-}
-elseif ( '/annonces/index.php/companyAlternance' == $uri
-    && isset($_GET['id'])) {
-    // Affichage d'une entreprise offrant de l'alternance
-
-    $controller->postAction($_GET['id'], $apiAlternance, $annoncesCheck);
-
-    $layout = new Layout("gui/layoutLogged.html" );
-    $vuePostAlternance = new ViewCompanyAlternance( $layout,  $_SESSION['login'], $presenter );
-
-    $vuePostAlternance->display();
-}
-
-elseif ( '/annonces/index.php/annoncesEmploi' == $uri ){
-    // affichage de toutes les offres d'emploi
-
-    $controller->annoncesAction($apiEmploi, $annoncesCheck);
-
-    $layout = new Layout("gui/layoutLogged.html" );
-    $vueAnnoncesEmploi= new ViewAnnoncesEmploi( $layout,  $_SESSION['login'], $presenter);
-
-    $vueAnnoncesEmploi->display();
-}
-
-
-
-
-elseif ( '/annonces/index.php/annonces' == $uri) {
+elseif ( '/annonces/index.php/annonces' == $uri ){
     if (isset($_POST['contractType'])) {
+        // création d'une annonce
         $controller->annonceCreationAction($_SESSION['login'], $_POST, $dataAnnonces, $annonceCreation);
     }
+
     // affichage de toutes les annonces
+
     $controller->annoncesAction($dataAnnonces, $annoncesCheck);
 
-    $layout = new Layout("gui/layout.html" );
+    $layout = new Layout("gui/layoutLogged.html" );
     $vueAnnonces= new ViewAnnonces( $layout,  $_SESSION['login'], $presenter);
 
     $vueAnnonces->display();
 }
-
 elseif ( '/annonces/index.php/post' == $uri
     && isset($_GET['id'])) {
     // Affichage d'une annonce
 
     $controller->postAction($_GET['id'], $dataAnnonces, $annoncesCheck);
 
-    $layout = new Layout("gui/layout.html" );
-    $vuePost= new ViewPost( $layout,  $_SESSION['login'], $presenter );
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vuePost= new ViewPost( $layout, $presenter,  $_SESSION['login'] );
 
     $vuePost->display();
 }
-
 elseif ( '/annonces/index.php/createAnnonce' == $uri ){
     // affichage du formulaire de création d'une annonce
 
@@ -190,12 +147,51 @@ elseif ( '/annonces/index.php/error' == $uri ){
 
     $vueError->display();
 }
+elseif ( '/annonces/index.php/annoncesEmploi' == $uri ){
+    // affichage de toutes les offres d'emploi
 
+    $controller->annoncesAction($apiEmploi, $annoncesCheck);
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vueAnnoncesEmploi= new ViewAnnoncesEmploi( $layout,  $_SESSION['login'], $presenter);
+
+    $vueAnnoncesEmploi->display();
+}
+elseif ( '/annonces/index.php/offreEmploi' == $uri && isset($_GET['id'])) {
+    // affichage de toutes les offres d'emploi
+
+    $controller->postAction($_GET['id'], $apiEmploi, $annoncesCheck);
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vuePostEmploi= new ViewOffreEmploi( $layout,  $_SESSION['login'], $presenter);
+
+    $vuePostEmploi->display();
+}
+elseif ( '/annonces/index.php/annoncesAlternance' == $uri ){
+    // Affichage de toutes les entreprises offrant de l'alternance
+
+    $controller->annoncesAction($apiAlternance, $annoncesCheck);
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vueAnnoncesAlternance= new ViewAnnoncesAlternance( $layout,  $_SESSION['login'], $presenter);
+
+    $vueAnnoncesAlternance->display();
+}
+
+elseif ( '/annonces/index.php/companyAlternance' == $uri
+    && isset($_GET['id'])) {
+    // Affichage d'une entreprise offrant de l'alternance
+
+    $controller->postAction($_GET['id'], $apiAlternance, $annoncesCheck);
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vuePostAlternance = new ViewCompanyAlternance( $layout,  $_SESSION['login'], $presenter );
+
+    $vuePostAlternance->display();
+}
 else {
     header('Status: 404 Not Found');
     echo '<html><body><h1>My Page NotFound</h1></body></html>';
 }
 
 ?>
-
-}
